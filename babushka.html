@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Babushka</title>
+
+
+      <header>
+        <h1></h1>
+        <nav>
+
+
+            <button class="menu-item" data-kategori="forretter">forret</button>
+
+            <button class="menu-item" data-kategori="hovedretter">hovedret</button>
+
+            <button class="menu-item" data-kategori="desserter">dessert</button>
+
+
+        </nav>
+
+    </header>
+
+
+
+
+    <style>
+        body{
+            background-color:rgb(240,240,240);
+        }
+        article{
+            padding: 1em;
+            background-color:white;
+        }
+        .data-container article img{
+            width:100%;
+        }
+        .data-container{
+            margin: 0 auto;
+            display:grid;
+        }
+       @media screen and (min-width:580px){
+            .data-container{
+                padding-left:10%;
+                padding-right:10%;
+                grid-gap: 5px;
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+    <main class="container">
+       <section class="data-container"></section>
+    </main>
+   <template class="data-template">
+      <article class="menu">
+          <h2></h2>
+          <img src="" alt=""><br>
+
+
+     <span class="data-kortbeskrivelse"></span><br>
+        Pris: <span class="data-pris"></span><br>
+
+      </article>
+   </template>
+
+   <script>
+
+
+
+
+       let dest=document.querySelector(".data-container"), retter,
+            kategoriFilter="alle";
+
+
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+        async function hentJson(){
+            let myJson = await fetch("json/menu.json");
+            retter = await myJson.json();
+
+            visRetter();
+        }
+
+
+       document.querySelectorAll(".menu-item").forEach(knap =>{
+
+
+           knap.addEventListener("click", filtrering)
+       });
+
+
+       function filtrering(){
+           dest.textContent="";
+           kategoriFilter=this.getAttribute("data-kategori");
+           visRetter();
+       }
+
+       function visRetter(){
+           let dest = document.querySelector(".data-container"),
+           temp = document.querySelector(".data-template");
+
+
+
+
+           //løb personlisten igennem og lav en klon
+           retter.forEach( ret => {
+
+               if(ret.kategori==kategoriFilter || kategoriFilter=="alle"){
+
+
+
+                let klon = temp.cloneNode(true).content;
+                //indsæt data i klonen
+
+
+                klon.querySelector("h2").textContent = ret.navn;
+                klon.querySelector("img").src = "/imgs/small/"+ret.billede + "-sm.jpg";
+
+
+               // klon.querySelector(".data-kategori").textContent = ret.kategori;
+               klon.querySelector(".data-pris").textContent = ret.pris;
+                klon.querySelector(".data-kortbeskrivelse").textContent = ret.kortbeskrivelse;
+
+
+
+
+
+                //placer klon i DOM
+                dest.appendChild(klon);
+                   }
+           } )
+       }
+    </script>
+</body>
+</html>
